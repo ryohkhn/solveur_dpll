@@ -71,7 +71,7 @@ let rec solveur_split clauses interpretation =
 let unitaire clauses = 
   if clauses = [] then failwith "Not_found" else
     let rec unitaire_aux clauses = match clauses with
-      | [x] -> x
+      | _::[x]::_ -> x
       | x::y -> unitaire_aux y
       | _ -> failwith "Not_found"
     in 
