@@ -38,9 +38,20 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 (* simplifie : int -> int list list -> int list list 
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
-let simplifie l clauses =
-  (* à compléter *)
-  []
+
+let rec simplifie l clauses =
+  match clauses with
+  | [] -> []
+  | head :: tail -> let rec simplifie_aux list =
+    match list with
+    | [] -> head :: simplifie2 l tail
+    | x :: tail2 -> if x == l then simplifie l tail 
+    else if x == -l then 
+    else simplifie_aux tail2
+  in simplifie_aux head
+;;
+
+
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -74,8 +85,7 @@ let unitaire clauses =
       | _::[x]::_ -> x
       | x::y -> unitaire_aux y
       | _ -> failwith "Not_found"
-    in 
-  unitaire_aux clauses
+    in unitaire_aux clauses
 ;;
     
 (* pur : int list list -> int
