@@ -35,23 +35,40 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 
 (********************************************************************)
 
+(* isX : a -> a List -> a List option
+   Applique la simplification à une clause.
+   Le litteral x est vrai donc on supprime la clause si on le trouve dedans.
+   Cette fonction est un filtre (a utiliser avec filter_map) qui renvoie soit None, soit Some d'une clause qui ne comprend pas x *)
+let isX x list =
+  (* isXaux : a -> a List -> a List -> a List option 
+     Si le litteral x est dans la clause -> None, sinon on renvoie la sauvegarde de la clause (listSave)*)
+  let rec isXaux x list listSave =  
+    match list with
+    | [] -> Some listSave
+    | h :: t -> if h == x then None else isXaux x t listSave
+  in isXaux x list list
+;;
+
+(* isNotX : int -> int List -> int List option
+   Applique la simplification a une clause.
+   Le litteral x est vrai, donc on supprime tous les not(x) de la clause.
+   Cette fonction est un filtre (a utiliser avec filter_map) qui renvoie soit None, soit Some d'une clause sans les not(x) *)
+let isNotX x list =
+  (* isNotXaux : int -> int List -> int List -> int List option 
+     On renvoie l'accumulateur (acc) auquel on a ajouté tous les éléments de la clause, sauf not(x) *)
+  let rec isNotXaux x list acc =
+    match list with
+    | [] -> Some acc
+    | h :: t -> if h == -x then isNotXaux x t acc else isNotXaux x t (h::acc)
+  in isNotXaux x list []
+;;
+
 (* simplifie : int -> int list list -> int list list 
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
-
-let rec simplifie l clauses =
-  match clauses with
-  | [] -> []
-  | head :: tail -> let rec simplifie_aux list =
-    match list with
-    | [] -> head :: simplifie2 l tail
-    | x :: tail2 -> if x == l then simplifie l tail 
-    else if x == -l then 
-    else simplifie_aux tail2
-  in simplifie_aux head
+let simplifie l clauses =
+  filter_map (isNotX l) (filter_map (isX l) clauses)
 ;;
-
-
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
