@@ -96,10 +96,11 @@ let rec solveur_split clauses interpretation =
     - si `clauses' contient au moins une clause unitaire, retourne
       le littéral de cette clause unitaire ;
     - sinon, lève une exception `Not_found' *)
+
 let unitaire clauses = 
   if clauses = [] then failwith "Not_found" else
     let rec unitaire_aux clauses = match clauses with
-      | _::[x]::_ -> x
+      | [x]::_ -> x
       | x::y -> unitaire_aux y
       | _ -> failwith "Not_found"
     in unitaire_aux clauses
@@ -109,9 +110,30 @@ let unitaire clauses =
     - si `clauses' contient au moins un littéral pur, retourne
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
+
+(* Parcours de la liste de clauses et vérifie dans chaque sous liste si la valeur en argument est pure *)
+let rec pur_parcours clauses value = match clauses with
+  | [] -> Some value
+  | x::y ->
+    let result = List.mem (-value) x in
+    if result then None else pur_parcours y value
+;;
+
+(* Parcours de la liste de liste et appelle pur_parcours sur chaque élément de la liste *)
 let pur clauses =
-  (* à compléter *)
-  0
+  let rec pur_aux_2 = function
+    | [] -> None
+    | x::y ->
+      let result = pur_parcours clauses x in
+      if result <> None then result else pur_aux_2 y
+  in
+  let rec pur_aux = function
+    | [] -> failwith "pas de littéral pur"
+    | l1::l2 ->
+      let result = pur_aux_2 l1 in
+      if result <> None then result else pur_aux l2
+  in pur_aux clauses
+;;
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
