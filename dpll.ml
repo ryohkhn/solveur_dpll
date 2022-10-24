@@ -98,11 +98,11 @@ let rec solveur_split clauses interpretation =
     - sinon, lève une exception `Not_found' *)
 
 let unitaire clauses = 
-  if clauses = [] then failwith "Not_found" else
+  if clauses = [] then raise Not_found else
     let rec unitaire_aux clauses = match clauses with
       | [x]::_ -> x
       | x::y -> unitaire_aux y
-      | _ -> failwith "Not_found"
+      | _ -> raise Not_found
     in unitaire_aux clauses
 ;;
     
@@ -128,22 +128,56 @@ let pur clauses =
       if result <> None then result else pur_aux_2 y
   in
   let rec pur_aux = function
-    | [] -> failwith "pas de littéral pur"
+    | [] -> raise Not_found
     | l1::l2 ->
       let result = pur_aux_2 l1 in
       if result <> None then result else pur_aux l2
   in pur_aux clauses
 ;;
 
+
+let int_from_option = function
+  | Some x -> x
+  | None -> failwith "no int in option result" ;;
+
+
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
-  (* à compléter *)
-  None
+  if clauses = [] then Some interpretation 
+  else if mem [] clauses then None 
+  else try let x = unitaire clauses in
+      solveur_dpll_rec (simplifie x clauses) (x::interpretation)
+      with Not_found -> 
+        try let y = pur clauses in
+        solveur_dpll_rec (simplifie (int_from_option y) clauses) ((int_from_option y)::interpretation)
+        with Not_found ->
+          let h = hd (hd clauses) in
+            let branche = solveur_dpll_rec (simplifie h clauses) (h::interpretation) in
+              match branche with
+              | None -> solveur_dpll_rec (simplifie (-h) clauses) ((-h)::interpretation)
+              | _    -> branche;;
+
 
 (* tests *)
-(* let () = print_modele (solveur_dpll_rec systeme []) *)
-(* let () = print_modele (solveur_dpll_rec coloriage []) *)
+(*let () = print_modele (solveur_dpll_rec systeme [])
+let () = print_modele (solveur_dpll_rec coloriage [])
 
+let () = print_modele (solveur_split systeme [])
+let () = print_modele (solveur_split coloriage [])
+
+let () = print_modele (solveur_dpll_rec [[1;2;3];[1;-2;-3];[1;-4];[-2;-3;-4];[-1;-2;3];[5;6];[5;-6];[2;-5];[-3;-5]] [])
+let () = print_modele (solveur_dpll_rec [[1;2;3];[1;-2;-3];[1;-4];[-2;-3;-4];[-1;-2;3];[5;6];[5;-6];[2;-5];[-3;-5];[1];[-1]] [])
+
+
+let () = print_modele (solveur_dpll_rec [[]] [])
+let () = print_modele (solveur_split [[]] [])
+let () = print_modele (solveur_dpll_rec [[1]] [])
+let () = print_modele (solveur_split [[1]] [])
+let () = print_modele (solveur_dpll_rec [[1;-1]] [])
+let () = print_modele (solveur_split [[1;-1]] [])
+let () = print_modele (solveur_dpll_rec [[1];[-1]] [])
+let () = print_modele (solveur_dpll_rec [[1];[-1]] [])
+*)
 let () =
   let clauses = Dimacs.parse Sys.argv.(1) in
   print_modele (solveur_dpll_rec clauses [])

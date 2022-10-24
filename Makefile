@@ -1,5 +1,5 @@
 dpll: dpll.ml dimacs.ml
-	ocamlopt -o dpll -package str -linkpkg dimacs.ml dpll.ml
+	ocamlfind ocamlopt -package str -linkpkg dimacs.ml dpll.ml -o dpll 
 
 clean:
 	rm -f *.cmi *.cmx *.o dpll
