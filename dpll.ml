@@ -97,6 +97,7 @@ let rec solveur_split clauses interpretation =
       le littéral de cette clause unitaire ;
     - sinon, lève une exception `Not_found' *)
 
+(* Parcours de la liste de liste, return l'élément s'il est unitaire sinon appelle récursivement sur la liste suivante *)
 let unitaire clauses = 
   if clauses = [] then raise Not_found else
     let rec unitaire_aux clauses = match clauses with
@@ -106,12 +107,12 @@ let unitaire clauses =
     in unitaire_aux clauses
 ;;
     
-(* pur : int list list -> int
+(* pur : int list list -> int option
     - si `clauses' contient au moins un littéral pur, retourne
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
 
-(* Parcours de la liste de clauses et vérifie dans chaque sous liste si la valeur en argument est pure *)
+(* Parcours de la liste de clauses et vérifie dans chaque sous liste si le littéral en argument est pur *)
 let rec pur_parcours clauses value = match clauses with
   | [] -> Some value
   | x::y ->
@@ -119,14 +120,16 @@ let rec pur_parcours clauses value = match clauses with
     if result then None else pur_parcours y value
 ;;
 
-(* Parcours de la liste de liste et appelle pur_parcours sur chaque élément de la liste *)
+(* Parcours de la liste de liste et appel de pur_parcours sur chaque élément de la liste *)
 let pur clauses =
+  (* Parcours de chaque sous liste, pur_parcours return un int option si l'élément en argument est un littéral pur *)
   let rec pur_aux_2 = function
     | [] -> None
     | x::y ->
       let result = pur_parcours clauses x in
       if result <> None then result else pur_aux_2 y
   in
+  (* Parcours de liste en liste, pur_aux_2 return un int option si un élément de la sous liste est pur *)
   let rec pur_aux = function
     | [] -> raise Not_found
     | l1::l2 ->
