@@ -1,3 +1,7 @@
 .fleet
 .vscode
 .idea
+*.cmi
+*.cmx
+*.o
+dpll
