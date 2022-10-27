@@ -47,7 +47,9 @@ Deuxieme utilisation avec le filtre `isNotX` qui renvoie une copie d'une liste e
    comment ces fonctions auxiliaires sont utilisées dans votre
    implémentation de la fonction `unitaire`.
 
-**à remplir**
+
+Nous n'utilisons pas de fonction auxiliaire pour l'implémentation de `unitaire`.
+La fonction effectue un parcours de la liste. Si l'élément est seul dans sa sous-liste il est retourné, sinon la fonction est appellée récursivement sur la suite de la liste.
 
 ---
 
@@ -56,7 +58,11 @@ Deuxieme utilisation avec le filtre `isNotX` qui renvoie une copie d'une liste e
    quelques phrases en français comment ces fonctions auxiliaires sont
    utilisées dans votre implémentation de la fonction `pur`.
 
-**à remplir**
+
+Nous avons écrit trois fonctions auxiliaires à la fonction `pur`, `pur_aux` et `pur_aux_2` qui lui sont internes et une troisième fonction `pur_parcours`.
+La première fonction auxiliaire effectue le parcours de liste en liste et appelle la fonction `pur_aux_2` sur chaque sous-liste.
+La seconde parcourt la sous-liste en argument et fait l'appel à `pur_parcours` sur chacun de ses éléments.
+Cette troisième fonction auxiliaire utilise la fonction `List.mem` sur l'inverse de l'élément en argument et return cette valeur si elle est pure.
 
 ---
 
@@ -64,12 +70,13 @@ Deuxieme utilisation avec le filtre `isNotX` qui renvoie une copie d'une liste e
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
 
+
 Nous pouvons utiliser l'exemple suivant : `clauses` = [[1;4;2];[4];[4;8;-2;-5];[4;-1];[-2;-3]]
 Les résultats sont les suivants :
 -solveur_dpll_rec -> SAT -3 4 0
 -solveur_split    -> SAT  1 -2 4 0
 
-Les différences entre ces deux fonctions viennent du fait que `solveur_split` n'utilise pas les regles `unitaire` et `pure`. Il résout un problème SAT en essayant récursivement des interprétations jusqu'à en trouver une bonne.
+Les différences entre ces deux fonctions viennent du fait que `solveur_split` n'utilise pas les règles `unitaire` et `pure`. Il résout un problème SAT en essayant récursivement des interprétations jusqu'à en trouver une bonne.
 Au contraire, `solveur_dpll_rec` utilise ces règles, ce qui est beaucoup plus efficace.
 
 ---

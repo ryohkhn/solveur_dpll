@@ -98,13 +98,10 @@ let rec solveur_split clauses interpretation =
     - sinon, lève une exception `Not_found' *)
 
 (* Parcours de la liste de liste, return l'élément s'il est unitaire sinon appelle récursivement sur la liste suivante *)
-let unitaire clauses = 
-  if clauses = [] then raise Not_found else
-    let rec unitaire_aux clauses = match clauses with
-      | [x]::_ -> x
-      | x::y -> unitaire_aux y
-      | _ -> raise Not_found
-    in unitaire_aux clauses
+let rec unitaire clauses = match clauses with
+  | [] -> raise Not_found
+  | [x]::_ -> x
+  | x::y -> unitaire y
 ;;
     
 
@@ -142,7 +139,8 @@ let unitaire clauses =
 (* int_from_option : int option -> int *)
 let int_from_option = function
   | Some x -> x
-  | None -> failwith "no int in option result" ;;
+  | None -> failwith "no int in option result"
+;;
 
 
 (* solveur_dpll_rec : int list list -> int list -> int list option 
@@ -160,7 +158,8 @@ let rec solveur_dpll_rec clauses interpretation =
             let branche = solveur_dpll_rec (simplifie h clauses) (h::interpretation) in
               match branche with
               | None -> solveur_dpll_rec (simplifie (-h) clauses) ((-h)::interpretation)
-              | _    -> branche;;
+              | _    -> branche
+;;
 
 
 (* tests *)
