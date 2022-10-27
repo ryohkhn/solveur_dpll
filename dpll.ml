@@ -35,12 +35,12 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 
 (********************************************************************)
 
-(* isX : a -> a List -> a List option
+(* isX : 'a -> 'a list -> 'a list option
    Applique la simplification à une clause.
    Le litteral x est vrai donc on supprime la clause si on le trouve dedans.
    Cette fonction est un filtre (a utiliser avec filter_map) qui renvoie soit None, soit Some d'une clause qui ne comprend pas x *)
 let isX x list =
-  (* isXaux : a -> a List -> a List -> a List option 
+  (* isXaux : 'a -> 'a list -> 'a list -> 'a list option
      Si le litteral x est dans la clause -> None, sinon on renvoie la sauvegarde de la clause (listSave)*)
   let rec isXaux x list listSave =  
     match list with
@@ -49,7 +49,7 @@ let isX x list =
   in isXaux x list list
 ;;
 
-(* isNotX : int -> int List -> int List option
+(* isNotX : int -> int list -> int list option
    Applique la simplification a une clause.
    Le litteral x est vrai, donc on supprime tous les not(x) de la clause.
    Cette fonction est un filtre (a utiliser avec filter_map) qui renvoie soit None, soit Some d'une clause sans les not(x) *)
@@ -91,7 +91,8 @@ let rec solveur_split clauses interpretation =
 (* let () = print_modele (solveur_split coloriage []) *)
 
 (* solveur dpll récursif *)
-    
+
+
 (* unitaire : int list list -> int
     - si `clauses' contient au moins une clause unitaire, retourne
       le littéral de cette clause unitaire ;
