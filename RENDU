@@ -19,7 +19,8 @@ Questions sur votre code
    et que ensuite `./dpll sudoku-4x4.cnf` donne la réponse attendue (voir
    fichier README) ?
 
-**à remplir**
+
+Oui, le fichier compile sans avertissement. La réponse attendue est obtenue.
 
 ---
 
@@ -30,7 +31,10 @@ Questions sur votre code
    - Si non, expliquez en quelques phrases en français comment
      fonctionne votre implémentation de `simplifie`.
 
-**à remplir**
+
+Nous avons utilisé la fonction `filter_map` deux fois dans notre implémentation de `simplifie`.
+Première utilisation avec le filtre `isX`, qui renvoie une copie d'une liste ne contenant pas le littéral `l`.
+Deuxieme utilisation avec le filtre `isNotX` qui renvoie une copie d'une liste en supprimant les litteraux correspondants a `not(l)`.
 
 ---
 
@@ -60,7 +64,13 @@ Questions sur votre code
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
 
-**à remplir**
+Nous pouvons utiliser l'exemple suivant : `clauses` = [[1;4;2];[4];[4;8;-2;-5];[4;-1];[-2;-3]]
+Les résultats sont les suivants :
+-solveur_dpll_rec -> SAT -3 4 0
+-solveur_split    -> SAT  1 -2 4 0
+
+Les différences entre ces deux fonctions viennent du fait que `solveur_split` n'utilise pas les regles `unitaire` et `pure`. Il résout un problème SAT en essayant récursivement des interprétations jusqu'à en trouver une bonne.
+Au contraire, `solveur_dpll_rec` utilise ces règles, ce qui est beaucoup plus efficace.
 
 ---
 

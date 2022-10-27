@@ -107,44 +107,46 @@ let unitaire clauses =
     in unitaire_aux clauses
 ;;
     
-(* pur : int list list -> int option
-    - si `clauses' contient au moins un littéral pur, retourne
-      ce littéral ;
-    - sinon, lève une exception `Failure "pas de littéral pur"' *)
 
-(* Parcours de la liste de clauses et vérifie dans chaque sous liste si le littéral en argument est pur *)
-let rec pur_parcours clauses value = match clauses with
-  | [] -> Some value
-  | x::y ->
-    let result = List.mem (-value) x in
-    if result then None else pur_parcours y value
-;;
+(* pur_parcours : int list list -> int -> int option
+   Parcours de la liste de clauses et vérifie dans chaque sous liste si le littéral en argument est pur *)
+   let rec pur_parcours clauses value = match clauses with
+   | [] -> Some value
+   | x::y ->
+     let result = List.mem (-value) x in
+     if result then None else pur_parcours y value
+ ;;
+ 
+ (* pur : int list list -> int option
+     - si `clauses' contient au moins un littéral pur, retourne ce littéral ;
+     - sinon, lève une exception `Not_found' *)
+ 
+ (* Parcours de la liste de liste et appel de pur_parcours sur chaque élément de la liste *)
+ let pur clauses =
+   (* Parcours de chaque sous liste, pur_parcours return un int option si l'élément en argument est un littéral pur *)
+   let rec pur_aux_2 = function
+     | [] -> None
+     | x::y ->
+       let result = pur_parcours clauses x in
+       if result <> None then result else pur_aux_2 y
+   in
+   (* Parcours de liste en liste, pur_aux_2 return un int option si un élément de la sous liste est pur *)
+   let rec pur_aux = function
+     | [] -> raise Not_found
+     | l1::l2 ->
+       let result = pur_aux_2 l1 in
+       if result <> None then result else pur_aux l2
+   in pur_aux clauses
+ ;;
 
-(* Parcours de la liste de liste et appel de pur_parcours sur chaque élément de la liste *)
-let pur clauses =
-  (* Parcours de chaque sous liste, pur_parcours return un int option si l'élément en argument est un littéral pur *)
-  let rec pur_aux_2 = function
-    | [] -> None
-    | x::y ->
-      let result = pur_parcours clauses x in
-      if result <> None then result else pur_aux_2 y
-  in
-  (* Parcours de liste en liste, pur_aux_2 return un int option si un élément de la sous liste est pur *)
-  let rec pur_aux = function
-    | [] -> raise Not_found
-    | l1::l2 ->
-      let result = pur_aux_2 l1 in
-      if result <> None then result else pur_aux l2
-  in pur_aux clauses
-;;
-
-
+(* int_from_option : int option -> int *)
 let int_from_option = function
   | Some x -> x
   | None -> failwith "no int in option result" ;;
 
 
-(* solveur_dpll_rec : int list list -> int list -> int list option *)
+(* solveur_dpll_rec : int list list -> int list -> int list option 
+   Application de l'algorithme DPLL sur clauses, renvoie une interprétation *)
 let rec solveur_dpll_rec clauses interpretation =
   if clauses = [] then Some interpretation 
   else if mem [] clauses then None 
@@ -168,19 +170,9 @@ let () = print_modele (solveur_dpll_rec coloriage [])
 let () = print_modele (solveur_split systeme [])
 let () = print_modele (solveur_split coloriage [])
 
-let () = print_modele (solveur_dpll_rec [[1;2;3];[1;-2;-3];[1;-4];[-2;-3;-4];[-1;-2;3];[5;6];[5;-6];[2;-5];[-3;-5]] [])
-let () = print_modele (solveur_dpll_rec [[1;2;3];[1;-2;-3];[1;-4];[-2;-3;-4];[-1;-2;3];[5;6];[5;-6];[2;-5];[-3;-5];[1];[-1]] [])
+let () = print_modele (solveur_dpll_rec [[1;4;2];[4];[4;8;-2;-5];[4;-1];[-2;-3]] [])
+let () = print_modele (solveur_split [[1;4;2];[4];[4;8;-2;-5];[4;-1];[-2;-3]] []) *)
 
-
-let () = print_modele (solveur_dpll_rec [[]] [])
-let () = print_modele (solveur_split [[]] [])
-let () = print_modele (solveur_dpll_rec [[1]] [])
-let () = print_modele (solveur_split [[1]] [])
-let () = print_modele (solveur_dpll_rec [[1;-1]] [])
-let () = print_modele (solveur_split [[1;-1]] [])
-let () = print_modele (solveur_dpll_rec [[1];[-1]] [])
-let () = print_modele (solveur_dpll_rec [[1];[-1]] [])
-*)
 let () =
   let clauses = Dimacs.parse Sys.argv.(1) in
   print_modele (solveur_dpll_rec clauses [])
